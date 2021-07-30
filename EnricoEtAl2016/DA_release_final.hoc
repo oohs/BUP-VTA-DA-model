@@ -1,0 +1,286 @@
+load_file("nrngui.hoc")
+load_file ("fixnseg.hoc")
+load_file("CellDef.hoc")
+
+
+celsius = 35
+tstart = 0
+tstop = 10000
+nprox = 11
+ndist = 16
+numstim = 16
+numsyn = 16
+weight = 1
+Vrest = -65
+
+
+objref stim[numstim], nmda[numsyn], ampa[numsyn], nc0[numstim], nc1[numstim], cvode
+objref soma_ap_count, soma_spikes, spikes_in_burst, firing_output
+objref syn_DA0, syn_DA1, nc2, nc3, DA_output
+objref rd
+
+
+soma_spikes = new Vector()
+spikes_in_burst = new Vector()
+firing_output = new File()
+DA_output = new File()
+
+cvode = new CVode(1)
+cvode.active(1)
+
+Vinit = Vrest
+soma area(.5)
+
+use_mcell_ran4(1)
+mcell_ran4_init()
+rd = new Random()
+rd.MCellRan4(657723357)
+rd.uniform(0,numsyn)
+
+
+forall {
+	Cm = 1
+	Vrest = -65
+	Ra = 400
+	Rm = 9500
+	ion_style("na_ion", 2,2,0,0,0)
+	na_cond = 550.0e-6 
+	kdr_cond = 665.0e-6
+	ca_cond = 11.196e-6
+	kca_cond = 59.0e-6
+	a_cond_s = 570.0e-6
+	a_cond_p = 285.0e-6
+	a_cond_d = 266.0e-6
+}
+
+soma {
+	soma_ap_count = new APCount(.5) 
+	soma_ap_count.record(soma_spikes)
+	insert nabalan
+	insert pump
+	insert cabalan
+	insert hd
+	{insert hh3 
+		gnabar_hh3 = na_cond
+		gkhhbar_hh3 = kdr_cond
+		gkabar_hh3 = a_cond_s
+		qs_hh3 = 56.0
+		qv_hh3 = 8.0
+		}
+	{insert leak
+		gcabar_leak = 0.6e-6
+		ggabaa_leak = 2750.0e-6
+		}
+	{insert cachan
+		gcalbar_cachan = ca_cond
+		gkbar_cachan = 0.0
+		}
+	{insert kca
+		gkbar_kca = kca_cond
+		}
+}
+
+for i=0, nprox-1 prox[i] {
+	insert nabalan
+	insert pump
+	{insert hh3
+		gnabar_hh3 = na_cond
+		gkhhbar_hh3 = kdr_cond
+		gkabar_hh3 = a_cond_p
+		qs_hh3 = 5.0
+		qv_hh3 = 60.0
+		}
+	{insert leak
+		gcabar_leak = 0.6e-6
+		ggabaa_leak = 275.0e-6
+		}
+}
+
+for j=0, ndist-1 dist[j] {
+	insert nabalan
+	insert pump
+	{insert hh3
+		gnabar_hh3 = na_cond
+		gkhhbar_hh3 = kdr_cond
+		gkabar_hh3 = a_cond_d
+		qs_hh3 = 5.0
+		qv_hh3 = 60.0
+		}
+	{insert leak
+		gcabar_leak = 0.6e-6
+		ggabaa_leak = 275.0e-6
+		}
+
+	nmda[j]=new nmdanet(1)
+	ampa[j]=new Exp2Syn(1)
+  	ampa[j].tau1 = 0.5
+  	ampa[j].tau2 = 3
+  	ampa[j].e = 0
+
+	stim[j]=new NetStimd(.5)
+	stim[j].start=rd.repick()
+	stim[j].number = 10000
+	stim[j].interv1 = 1000/20
+	stim[j].interv2 = 1000/50
+	stim[j].swd = 800
+	stim[j].swu = 200
+	stim[j].noise = 1
+
+	nc0[j]=new NetCon(stim[j],ampa[j],0,0,1.14*weight*1e-03)
+	nc1[j]=new NetCon(stim[j],nmda[j],0,0,2.82*weight*1e-03)
+
+}
+
+
+gna = na_cond
+gkdr = kdr_cond
+gkas = a_cond_s
+gkap = a_cond_s
+gkad = a_cond_p
+gca = ca_cond
+gkca = kca_cond
+
+
+proc na() {
+	forall gnabar_hh3 = gna
+}
+
+proc kdel() {
+	forall gkhhbar_hh3 = gkdr
+}
+
+proc ka() {
+	soma gkabar_hh3 = gkas
+	for i=0, nprox-1 prox[i] { gkabar_hh3 = gkap}
+	for j=0, ndist-1 dist[j] { gkabar_hh3 = gkad}
+}
+
+proc gcal() {
+	soma gcalbar_cachan = gca
+	soma gcanbar_cachan= gca
+	soma gcatbar_cachan= gca
+}
+
+proc gkcal() {
+	soma gkbar_kca = gkca
+}
+
+proc GABA() { local GABA_weight
+	GABA_weight = $1
+	soma ggabaa_leak = GABA_weight*2750.0e-6
+	for i=0, nprox-1 prox[i] { ggabaa_leak = GABA_weight*275.0e-6}
+	for j=0, ndist-1 dist[j] { ggabaa_leak = GABA_weight*275.0e-6}
+}
+
+
+xpanel ( "Model conductances" ) 
+xvalue ( "gnabar", "gna", 1, "na()" )
+xvalue ( "gkdrbar", "gkdr", 1, "kdel()" )
+xvalue ( "soma_gkabar", "gkas", 1, "ka()" )
+xvalue ( "prox_gkabar", "gkap", 1, "ka()" )
+xvalue ( "dist_gkabar", "gkad", 1, "ka()" )
+xvalue ( "gcabar", "gca", 1, "gcal()" )
+xvalue ( "gkcabar", "gkca", 1, "gkcal()" )
+xpanel()
+
+load_file("DA_release.ses")
+
+
+na()
+kdel()
+ka()
+gcal()
+gkcal()
+
+
+proc Rin_compute() { localobj r
+	finitialize(-65)
+	r = new Impedance()
+	soma r.loc(.5)
+	r.compute(1,1)
+	Rin = r.input(.5)
+	print Rin, "input resistance" 
+}
+
+proc average() {
+	soma_spikes.append(tstop)
+	spikes_in_burst.resize(0)
+	index = 1
+	spike_cnt = 0  
+	burst_cnt = 0
+	flag = 0
+	indini = 0
+	number = 0
+
+while (index < soma_spikes.size()) {
+	interval = soma_spikes.x[index]-soma_spikes.x[index-1]
+	if (interval < 160){ 
+		flag = 1
+		} else {
+	if (flag > 0) {
+		burst_cnt = burst_cnt+1
+		number = index-indini
+		spikes_in_burst.append(number)
+		indini = index
+		flag = 0
+			} else {
+				spike_cnt = spike_cnt+1
+				indini = index
+				}
+			}
+		index = index+1
+		}
+
+print burst_cnt, spike_cnt, soma_ap_count.n, spikes_in_burst.mean()	
+firing_output.printf ("%g %g %g %g\n", burst_cnt, spike_cnt, soma_ap_count.n, spikes_in_burst.mean())
+}
+
+proc withdrawal() {
+	soma {
+		for z = 0, n3d()-1 {
+		pt3dchange (z, x3d(z),y3d(z),z3d(z),diam3d(z)*0.7)
+		}
+}
+}
+
+proc loop() {
+	firing_output.wopen("firing_cnt.txt")
+	k=1
+	for (k>0; k<=2; k=k+1){
+		run()
+		print soma_ap_count.n
+		average()
+		}
+	firing_output.close()
+}
+
+
+create acell
+acell {
+	syn_DA0 = new dopnet(.5)
+	syn_DA0.vmax = 5*1e-3
+	syn_DA1 = new dopnet(.5)
+	syn_DA1.vmax = 0.5*1e-3
+}
+
+nc2 = new NetCon(&v(.5), syn_DA0, -20, 0, 0.4)
+nc3 = new NetCon(&v(.5), syn_DA1, -20, 0, 0.046)
+
+proc release() {
+	Graph[1].addexpr("syn_DA0.dop", 1, 1, 2.99, 2.99, 2)
+	Graph[1].addexpr("syn_DA1.dop", 2, 1, 2.99, 2.99, 2)
+	soma_spikes.resize(0)
+	compare = 0
+}
+
+proc init() {
+	finitialize(v_init)
+	fcurrent()
+	t = tstart
+}
+
+init()
+
+release()
+
+//loop()
