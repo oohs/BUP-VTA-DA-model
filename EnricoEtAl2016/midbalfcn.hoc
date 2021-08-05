@@ -1,0 +1,24 @@
+
+proc midbal() {local wt, thisstep
+	if (AddOpioid>0) {
+		print "Planning to add opioid at t = ", AddTime, " ms"
+		cvode.event(AddTime, "addopioid()")
+	}
+}
+
+proc addopioid() {
+	// code in here to model the effect of adding opioids
+	//
+	// We will need a biological idea of the effect first. You
+	// can look at the references the paper gives for that (from
+	// 2005 and 2014) and there is also a more recent reference:
+	// https://pubmed.ncbi.nlm.nih.gov/32679049/
+	//
+	// Then we figure out what parameter(s) in the model are
+	// relevant to that biological effect and change them in
+	// this procedure/function:
+	print "pretending to add opioid now... please update this code..."
+
+
+
+}

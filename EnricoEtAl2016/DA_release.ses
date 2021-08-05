@@ -22,6 +22,16 @@ gkca = 0.0008
 xvalue("gkcabar","gkca", 1,"gkcal()", 0, 0 )
 xpanel(-4,120)
 }
+
+{
+xpanel("Opioid Additions", 0)
+AddOpioid=0 // 0: don't administer opioid. 1: do administer at AddTime time in simulation
+xvalue("AddOpioid (0 or 1)","AddOpioid", 1,"parAddOpioid()", 0, 0 ) // parAddOpioid()
+xvalue("Time to add (ms)","AddTime", 1,"parAddTime()", 0, 0 ) // parAddTime(), parAddOpioid()
+
+AddTime = 7000 // Time in simulation to administer opioid
+xpanel(-3,30)
+}
 {
 save_window_ = new Graph(0)
 save_window_.size(0,10000,-80,50)
@@ -46,7 +56,7 @@ save_window_.addexpr("syn_DA1.dop", 2, 1, 2.99, 2.99, 2)
 xpanel("RunControl", 0)
 v_init = -65
 xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
-xbutton("Init & Run","run()")
+xbutton("Init & Run","recrun()")
 xbutton("Stop","stoprun=1")
 runStopAt = 5
 xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
