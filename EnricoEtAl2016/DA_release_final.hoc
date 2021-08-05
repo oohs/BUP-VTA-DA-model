@@ -44,7 +44,7 @@ forall {
 	Ra = 400
 	Rm = 9500
 	ion_style("na_ion", 2,2,0,0,0)
-	na_cond = 550.0e-6 
+	na_cond = 550.0e-6
 	kdr_cond = 665.0e-6
 	ca_cond = 11.196e-6
 	kca_cond = 59.0e-6
@@ -54,13 +54,13 @@ forall {
 }
 
 soma {
-	soma_ap_count = new APCount(.5) 
+	soma_ap_count = new APCount(.5)
 	soma_ap_count.record(soma_spikes)
 	insert nabalan
 	insert pump
 	insert cabalan
 	insert hd
-	{insert hh3 
+	{insert hh3
 		gnabar_hh3 = na_cond
 		gkhhbar_hh3 = kdr_cond
 		gkabar_hh3 = a_cond_s
@@ -173,7 +173,7 @@ proc GABA() { local GABA_weight
 }
 
 
-xpanel ( "Model conductances" ) 
+xpanel ( "Model conductances" )
 xvalue ( "gnabar", "gna", 1, "na()" )
 xvalue ( "gkdrbar", "gkdr", 1, "kdel()" )
 xvalue ( "soma_gkabar", "gkas", 1, "ka()" )
@@ -199,14 +199,14 @@ proc Rin_compute() { localobj r
 	soma r.loc(.5)
 	r.compute(1,1)
 	Rin = r.input(.5)
-	print Rin, "input resistance" 
+	print Rin, "input resistance"
 }
 
 proc average() {
 	soma_spikes.append(tstop)
 	spikes_in_burst.resize(0)
 	index = 1
-	spike_cnt = 0  
+	spike_cnt = 0
 	burst_cnt = 0
 	flag = 0
 	indini = 0
@@ -214,7 +214,7 @@ proc average() {
 
 while (index < soma_spikes.size()) {
 	interval = soma_spikes.x[index]-soma_spikes.x[index-1]
-	if (interval < 160){ 
+	if (interval < 160){
 		flag = 1
 		} else {
 	if (flag > 0) {
@@ -231,7 +231,7 @@ while (index < soma_spikes.size()) {
 		index = index+1
 		}
 
-print burst_cnt, spike_cnt, soma_ap_count.n, spikes_in_burst.mean()	
+print burst_cnt, spike_cnt, soma_ap_count.n, spikes_in_burst.mean()
 firing_output.printf ("%g %g %g %g\n", burst_cnt, spike_cnt, soma_ap_count.n, spikes_in_burst.mean())
 }
 
