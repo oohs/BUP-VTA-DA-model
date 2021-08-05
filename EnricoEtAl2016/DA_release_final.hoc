@@ -140,6 +140,14 @@ gkad = a_cond_p
 gca = ca_cond
 gkca = kca_cond
 
+proc parAddTime() {
+ print "AddTime = ", AddTime
+}
+
+proc parAddOpioid() {
+ print "AddOpioid = ", AddOpioid
+
+}
 
 proc na() {
 	forall gnabar_hh3 = gna
@@ -279,8 +287,45 @@ proc init() {
 	t = tstart
 }
 
+// MB: Add in code to let you alter the conditions
+// in the middle of the simulation
+//AddOpioid = 1 // 1: add opioids, 0: don't add opioids
+//AddTime = 100 // time in simulation to add the opioid 
+xopen("midbalfcn.hoc")
+objref fihw
+fihw = new FInitializeHandler(2, "midbal()")
+
+
 init()
 
 release()
 
 //loop()
+
+objref dv, da0, da1, f
+proc recrun() {record_run_write() }
+proc record_run_write() {
+	// record
+	dv = new Vector()
+	dv.record(&v(.5))
+
+	da0 = new Vector()
+	da1 = new Vector()
+
+	da0.record(&syn_DA0.dop)
+	da1.record(&syn_DA1.dop)
+
+	run()
+
+	// write out
+	f = new File("results.csv")
+	f.wopen()
+	f.printf("t, v, da0, da1\n")
+	for i=0, dv.size()-1 {
+		f.printf("%g, %g, %g, %g\n", i*dt, dv.x[i], da0.x[i], da1.x[i])
+	}
+	f.close()
+}
+//(tstop-tstart)/dt-1
+
+//record_run_write()

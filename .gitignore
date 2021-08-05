@@ -1,0 +1,8 @@
+# mod files
+*.c
+*.o
+*.dll
+
+# results data
+*.dat
+*.csv
