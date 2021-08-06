@@ -25,11 +25,11 @@ xpanel(-4,120)
 
 {
 xpanel("Opioid Additions", 0)
-AddOpioid=0 // 0: don't administer opioid. 1: do administer at AddTime time in simulation
+AddOpioid=1 // 0: don't administer opioid. 1: do administer at AddTime time in simulation
 xvalue("AddOpioid (0 or 1)","AddOpioid", 1,"parAddOpioid()", 0, 0 ) // parAddOpioid()
 xvalue("Time to add (ms)","AddTime", 1,"parAddTime()", 0, 0 ) // parAddTime(), parAddOpioid()
 
-AddTime = 7000 // Time in simulation to administer opioid
+AddTime = 0 // Time in simulation to administer opioid
 xpanel(-3,30)
 }
 {

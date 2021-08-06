@@ -1,7 +1,7 @@
 
 proc midbal() {local wt, thisstep
 	if (AddOpioid>0) {
-		print "Planning to add opioid at t = ", AddTime, " ms"
+		print "Planning to add opioid/agonist at t = ", AddTime, " ms"
 		cvode.event(AddTime, "addopioid()")
 	}
 }
@@ -17,8 +17,20 @@ proc addopioid() {
 	// Then we figure out what parameter(s) in the model are
 	// relevant to that biological effect and change them in
 	// this procedure/function:
-	print "pretending to add opioid now... please update this code..."
+	// print "pretending to add opioid now... please update this code..."
 
+//FOR BUP
+	GABA(1.3*1.47)
 
+//FOR MORPHINE
+	//GABA (1.3 * 0.54)
 
+	for j=0, ndist-1 dist[j] {
+	//FOR BUP
+		nc0[j].weight[0] = 1.14*0.7*1.57*1e-03
+		nc1[j].weight[0] = 2.82*0.7*1.57*1e-03
+	//FOR MORPHINE
+		//nc0[j].weight[0] = 1.14*0.7*1.3*1e-03
+		//nc1[j].weight[0] = 2.82*0.7*1.3*1e-03
+	}
 }

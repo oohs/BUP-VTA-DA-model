@@ -10,7 +10,7 @@ nprox = 11
 ndist = 16
 numstim = 16
 numsyn = 16
-weight = 1
+weight = 0.7
 s_comp = 1.325
 Vrest = -65
 
@@ -35,7 +35,7 @@ soma area(.5)
 use_mcell_ran4(1)
 mcell_ran4_init()
 rd = new Random()
-rd.MCellRan4(657723357)
+rd.MCellRan4(9) //i think change this to change random seed
 rd.uniform(0,numsyn)
 
 
@@ -145,6 +145,15 @@ gkad = a_cond_p
 gca = ca_cond
 gkca = kca_cond
 
+proc parAddTime() {
+ print "AddTime = ", AddTime
+}
+
+proc parAddOpioid() {
+ print "AddOpioid = ", AddOpioid
+
+}
+
 
 proc na() {
 	soma gnabar_hh3 = gna*s_comp
@@ -193,7 +202,8 @@ xpanel()
 
 load_file("DA_release.ses")
 
-//GABA(1)
+//change gaba levels
+GABA(1.3)
 
 na()
 kdel()
@@ -290,7 +300,7 @@ proc init() {
 // MB: Add in code to let you alter the conditions
 // in the middle of the simulation
 //AddOpioid = 1 // 1: add opioids, 0: don't add opioids
-//AddTime = 100 // time in simulation to add the opioid 
+//AddTime = 100 // time in simulation to add the opioid
 xopen("midbalfcn.hoc")
 objref fihw
 fihw = new FInitializeHandler(2, "midbal()")
@@ -305,12 +315,15 @@ withdrawal()
 //loop()
 
 
-objref dv, da0, da1, f
+objref dv, da0, da1, f, rect
 
 proc record_run_write() {
 	// record
 	dv = new Vector()
 	dv.record(&v(.5))
+
+	rect = new Vector()
+	rect.record(&t)
 
 	da0 = new Vector()
 	da1 = new Vector()
@@ -325,7 +338,7 @@ proc record_run_write() {
 	f.wopen()
 	f.printf("t, v, da0, da1\n")
 	for i=0, dv.size()-1 {
-		f.printf("%g, %g, %g, %g\n", i*dt, dv.x[i], da0.x[i], da1.x[i])
+		f.printf("%g, %g, %g, %g\n", rect.x(i), dv.x[i], da0.x[i], da1.x[i])
 	}
 	f.close()
 }

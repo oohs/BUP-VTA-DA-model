@@ -193,6 +193,7 @@ xpanel()
 
 load_file("DA_release.ses")
 
+//GABA(0.54)
 
 na()
 kdel()
@@ -290,7 +291,7 @@ proc init() {
 // MB: Add in code to let you alter the conditions
 // in the middle of the simulation
 //AddOpioid = 1 // 1: add opioids, 0: don't add opioids
-//AddTime = 100 // time in simulation to add the opioid 
+//AddTime = 100 // time in simulation to add the opioid
 xopen("midbalfcn.hoc")
 objref fihw
 fihw = new FInitializeHandler(2, "midbal()")
