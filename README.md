@@ -2,10 +2,6 @@
 BU RISE 2021 project, simulate buprenorphine on withdrawal VTA DA neuron
 
 
-
-### test here <h1>DJFIDSFJISDFJISDFJSDIFJ</h1>
-
-
 **Abstract**:
 Modeling the effects of buprenorphine during morphine withdrawal in ventral tegmental area dopamine neurons 
 
