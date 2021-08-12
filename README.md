@@ -5,6 +5,7 @@ Abstract:
 Modeling the effects of buprenorphine during morphine withdrawal in ventral tegmental area dopamine neurons 
 
 Lawrence Long<sup>1,5</sup>, Aiden Kim<sup>2,5</sup>, Luke Shao<sup>3,5</sup> , Oviya Kalaivanan<sup>4,5</sup>, Andrew Looka<sup>5</sup>, Marianne Bezaire<sup>5</sup>
+
 1.) BASIS Independent Silicon Valley, 1290 Parkmoor Ave, San Jose, CA 95126
 2.) Okemos High School, 2800 Jolly Rd, Okemos, MI 48864
 3.) West Windsor-Plainsboro High School North, 90 Grovers Mill Rd, Plainsboro, NJ 08536
