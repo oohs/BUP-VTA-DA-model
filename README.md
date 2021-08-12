@@ -18,4 +18,5 @@ Morphine is a common prescription painkiller that impacts several brain regions;
 
 [Presentation](/RISEPresentation.pdf)
 
-<a href="oohs.github.io/BUP-VTA-DA-model/Poster.pptx.pdf" target="_blank">PDF.</a>
+<a href="oohs.github.io/BUP-VTA-DA-model/Poster.pptx.pdf" target="_blank">Poster (to be updated).</a>
+<a href="oohs.github.io/BUP-VTA-DA-model/RISEPresentation.pdf" target="_blank">Presentation (to be updated).</a>
